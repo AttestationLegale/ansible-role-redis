@@ -1,0 +1,74 @@
+#! /bin/sh
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:{{ redis_install_prefix}}/{{ item.version }}
+DAEMON={{ redis_install_prefix }}/{{ item.version }}/redis-server
+DAEMON_ARGS=${HOME}/etc/redis.conf
+NAME=redis-server
+DESC=redis-server
+PIDFILE=${HOME}/run/redis.pid
+
+test -x $DAEMON || exit 0
+test -x $DAEMONBOOTSTRAP || exit 0
+
+set -e
+
+is_running() {
+    if test -f $PIDFILE
+    then
+      pid=$(cat $PIDFILE)
+      running=$(ps -p $pid -h -o pid)
+      echo $running
+    fi
+    echo ""
+
+}
+
+case "$1" in
+  start)
+    echo -n "Starting $DESC: "
+    running=$(is_running)
+    if test -n "${running}"
+    then
+      echo "already running (${running})"
+    else
+      if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_ARGS
+      then
+          echo "$NAME."
+      else
+          echo "failed"
+      fi
+    fi
+    ;;
+  stop)
+    echo -n "Stopping $DESC: "
+    if start-stop-daemon --stop --retry 10 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
+    then
+        echo "$NAME."
+    else
+        echo "failed"
+    fi
+    rm -f $PIDFILE
+    ;;
+
+  status)
+    echo -n "$DESC is "
+    running=$(is_running)
+    if test -z "${running}"
+    then
+      echo "halted"
+    else
+      echo "running (${running})"
+    fi
+    ;;
+
+  restart|force-reload)
+    ${0} stop
+    ${0} start
+    ;;
+  *)
+    echo "Usage: $NAME {start|stop|status|restart|force-reload}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

@@ -4,13 +4,11 @@
 
   vars:
     - users_per_user_group: false
-    - users_alt_homebase:
-      - path: /srv/redis
     - users_users:
       - username: redis
         uid: 10000
         group: redis
-        home: /srv/redis/redis
+        home: /srv/redis
         name: Redis Instance
     - users_groups:
       - name: redis
@@ -18,7 +16,7 @@
     - redis_instances:
       - owner: redis
         group: redis
-        home: /srv/redis/redis
+        home: /srv/redis
         version: 3.0.7
         config:
             saves:

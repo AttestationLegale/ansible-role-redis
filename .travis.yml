@@ -40,9 +40,5 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  # Debug
-  - >
-    sudo cat /srv/redis/redis/etc/redis.conf
-
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
