@@ -35,7 +35,7 @@
     mode: "0755"
   with_nested: 
     - "{{ redis_instances }}"
-    - ['bin', 'data', 'logs']
+    - ['bin', 'etc', 'data', 'logs']
   when: item[0].version is defined
   tags: [redis]
 
