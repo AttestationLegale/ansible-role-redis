@@ -42,7 +42,7 @@ script:
 
   # Debug
   - >
-    sudo cat /srv/redis/redis/etc/redis.conf
+    sudo cat /srv/redis/bin/redis-server
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
