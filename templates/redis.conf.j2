@@ -38,3 +38,41 @@ rdbcompression {{ item.config.rdbcompression|default('yes') }}
 rdbchecksum {{ item.config.rdbchecksum|default('yes') }}
 dbfilename {{ item.config.dbfilename|default('dump.rdb') }}
 dir {{ item.home~'/data' }}
+
+{% if item.config.slaveof is defined and item.config.slaveof.master is defined %}
+################################# REPLICATION #################################
+
+slaveof {{ item.config.slaveof.master }} {{ item.config.slaveof.port|default('6379') }}
+{% if item.config.masterauth is defined %}
+masterauth {{ item.config.masterauth }}
+{% endif %}
+slave-serve-stale-data {{ item.config.slave_serve_stale_data|default('yes') }}
+slave-read-only {{ item.config.slave_read_only|default('yes') }}
+
+# Replication SYNC strategy: disk or socket.
+repl-diskless-sync {{ item.config.repl_diskless_sync|default('no') }}
+repl-diskless-sync-delay {{ item.config.repl-diskless_sync_delay|default('5') }}
+repl-ping-slave-period {{ item.config.repl_ping_slave_period|default('10') }}
+repl-timeout {{ item.config.repl_timeout|default('60') }}
+repl-disable-tcp-nodelay {{ item.config.repl_disable_tcp_nodelay|default('no') }}
+repl-backlog-size {{ item.config.repl_backlog_size|default('1mb') }}
+repl-backlog-ttl  {{ item.config.repl_backlog_ttl|default('3600') }}
+slave-priority {{ item.config.slave_priority|default('100') }}
+min-slaves-to-write {{ item.config.min_slaves_to_write|default('0') }}
+min-slaves-max-lag {{ item.config.min_slaves_max_lag|default('10') }}
+{% endif %}
+
+################################## SECURITY ###################################
+
+{% if item.config.requirepass is defined %}
+requirepass {{ item.config.requirepass }}
+{% endif %}
+
+################################### LIMITS ####################################
+
+maxclients {{ item.config.maxclients|default('10000') }}
+{% if item.config.maxmemory is defined %}
+maxmemory {{ item.config.maxmemory }}
+{% endif %}
+maxmemory-policy {{ item.config.maxmemory_policy|default('noeviction') }}
+maxmemory-samples {{ item.config.maxmemory_samples|default('5') }}
