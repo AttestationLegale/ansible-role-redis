@@ -25,8 +25,8 @@ databases {{ item.config.databases|default('16') }}
 ################################ SNAPSHOTTING  ################################
 
 {% if item.config.saves is defined %}
-{% for seconds, threshold in item.config.saves %}
-save {{ seconds }} {{ threshold }}
+{% for save in item.config.saves %}
+save {{ save['seconds'] }} {{ save['threshold'] }}
 {% endfor %}
 {% else %}
 save 900 1
@@ -93,14 +93,14 @@ dir /srv/redis/var/lib/redis
 #    network partition slaves automatically try to reconnect to masters
 #    and resynchronize with them.
 #
-slaveof 164.132.96.101 6379
+slaveof 127.0.0.1 6379
 
 # If the master is password protected (using the "requirepass" configuration
 # directive below) it is possible to tell the slave to authenticate before
 # starting the replication synchronization process, otherwise the master will
 # refuse the slave request.
 
-masterauth 9dfc401cc800352f2c486c6c9999db6f
+masterauth toto
 
 # When a slave loses its connection with the master, or when the replication
 # is still in progress, the slave can act in two different ways:
