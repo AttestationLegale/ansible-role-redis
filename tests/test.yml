@@ -23,11 +23,14 @@
         config:
             saves:
               - seconds: 900
-                threshold: 10
+                threshold: 1
               - seconds: 300
-                threshold: 11
+                threshold: 10
               - seconds: 60
-                threshold: 12
+                threshold: 10000
+            slaveof:
+              master: 127.0.0.1
+              port: 6379
 
   roles:
     - AttestationLegale.users
