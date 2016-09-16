@@ -1,0 +1,62 @@
+---
+
+# Main tasks file for redis role
+
+- name: Ensure redis install prefix exists
+  file:
+    path: "{{ redis_install_prefix }}"
+    state: directory
+    mode: "0755"
+  tags: [redis]
+
+- name: Check if redis is installed
+  stat:
+    path: "{{ redis_install_prefix~'/'~item.version }}"
+  register: redisdir
+  with_items: "{{ redis_instances }}"
+  when: item.version is defined
+  tags: [redis]
+
+- name: Download and Extract redis
+  unarchive:
+    src: "{{ redis_baseurl~'/redis-'~item.item.version~'.tar.gz' }}"
+    dest: "{{ redis_install_prefix }}"
+    copy: "no"
+  with_items: "{{ redisdir.results }}"
+  when: item.item.version is defined and not item.stat.exists
+  tags: [redis]
+
+- name: Make sure redis paths exist
+  file:
+    path: "{{ item[0].home~'/'~item[1] }}"
+    state: directory
+    owner: "{{ item[0].owner }}"
+    group: "{{ item[0].group }}"
+    mode: "0755"
+  with_nested: 
+    - "{{ redis_instances }}"
+    - ['bin', 'data', 'logs']
+  when: item[0].version is defined
+  tags: [redis]
+
+- name: Push redis config
+  template:
+    src: redis.conf.j2
+    dest: "{{ item.home~'/etc/redis.conf' }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "0644"
+  with_items: "{{ redis_instances }}"
+  when: item.version is defined
+  tags: [redis]
+
+- name: Push redis startup script
+  template:
+    src: redis.j2
+    dest: "{{ item.home~'/bin/redis' }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "0554"
+  with_items: "{{ redis_instances }}"
+  when: item.version is defined
+  tags: [redis]

@@ -1,0 +1,9 @@
+---
+
+# Defaults vars file for redis role
+
+redis_baseurl: 'https://packages.attestationlegale.fr/{{ ansible_distribution }}/{{ ansible_distribution_release }}/{{ ansible_machine }}'
+
+redis_install_prefix: '/opt/redis'
+
+redis_instances: []
