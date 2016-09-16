@@ -25,7 +25,7 @@ databases {{ item.config.databases|default('16') }}
 ################################ SNAPSHOTTING  ################################
 
 {% if item.config.saves is defined %}
-{% for seconds, threshold in item.config.saves.iteritems() %}
+{% for seconds, threshold in item.config.saves %}
 save {{ seconds }} {{ threshold }}
 {% endfor %}
 {% else %}
